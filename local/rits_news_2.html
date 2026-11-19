@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#57068C">
+<meta name="robots" content="index, follow">
+<title>All News · NYU Shanghai RITS</title>
+<meta name="description" content="News curated by NYU Shanghai Research and Instructional Technology Services.">
+<meta property="og:title" content="All News">
+<meta property="og:url" content="https://rits.shanghai.nyu.edu/posts/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NYU Shanghai RITS">
+<meta property="og:locale" content="en_US">
+<style>
+/* =========================================================
+   1. FOUNDATION — design tokens
+   ========================================================= */
+:root {
+  /* Color: brand */
+  --color-brand:        #57068C;   /* NYU violet */
+  --color-brand-strong: #3F0468;   /* hover / pressed */
+  --color-brand-tint:   #F4EEF9;   /* soft violet surface */
+  --color-on-brand:     #FFFFFF;
+  --color-on-brand-muted: #E6D9F2; /* secondary text on violet (≥ 7:1) */
+
+  /* Color: neutrals */
+  --color-bg:           #FFFFFF;
+  --color-surface:      #F6F5F8;
+  --color-border:       #D9D6E0;
+  --color-border-strong:#8A8596;   /* form-control borders (≥ 3:1) */
+  --color-text:         #1B1A20;
+  --color-text-muted:   #55525F;   /* ≥ 7:1 on white */
+  --color-focus:        #0B5FFF;
+  --color-placeholder:  #2A1A3B;   /* image fallback */
+
+  /* Type: families */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-serif: Georgia, "Times New Roman", "Songti SC", serif;
+
+  /* Type: scale (major third, 1.25) */
+  --text-xs:   0.8125rem;  /* 13 */
+  --text-sm:   0.9375rem;  /* 15 */
+  --text-base: 1.0625rem;  /* 17 */
+  --text-md:   1.25rem;    /* 20 */
+  --text-lg:   1.5625rem;  /* 25 */
+  --text-xl:   1.9375rem;  /* 31 */
+  --text-2xl:  2.4375rem;  /* 39 */
+  --leading-tight: 1.2;
+  --leading-snug:  1.35;
+  --leading-body:  1.6;
+  --weight-regular: 400;
+  --weight-medium:  600;
+  --weight-bold:    700;
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  /* Layout */
+  --container: 70rem;       /* 1120px */
+  --gutter: var(--space-4);
+  --header-h: 3.5rem;       /* slim header: 56px */
+  --radius: 4px;
+  --tap: 2.75rem;           /* 44px minimum target */
+}
+@media (min-width: 48em) { :root { --gutter: var(--space-5); } }
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + var(--space-4)); }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  text-align: left;                 /* left-align everything */
+}
+h1, h2, h3, h4, p, ul, ol, figure { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+a { color: var(--color-brand); text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+a:hover { color: var(--color-brand-strong); text-decoration-thickness: 2px; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* ---------- Skip link (5) ---------- */
+.skip-link {
+  position: absolute; left: var(--space-3); top: -4rem; z-index: 1000000;
+  background: var(--color-text); color: #fff; padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius); font-weight: var(--weight-medium);
+}
+.skip-link:focus { top: var(--space-3); color: #fff; }
+
+/* ---------- Page header ---------- */
+.breadcrumbs { padding-top: var(--space-4); font-size: var(--text-xs); color: var(--color-text-muted); }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
+.breadcrumbs li + li::before { content: "/"; margin-right: var(--space-2); color: var(--color-border-strong); }
+.breadcrumbs a { color: var(--color-text-muted); }
+.page-head { padding-block: var(--space-5) var(--space-5); }
+.page-head h1 { font-size: var(--text-2xl); line-height: var(--leading-tight); letter-spacing: -0.01em; }
+.page-head .meta { margin-top: var(--space-2); font-size: var(--text-sm); color: var(--color-text-muted); }
+
+/* ---------- Toolbar (search + filters) ---------- */
+.toolbar { display: grid; gap: var(--space-3); grid-template-columns: 1fr; padding-bottom: var(--space-5); border-bottom: 1px solid var(--color-border); }
+@media (min-width: 40em) { .toolbar { grid-template-columns: repeat(3, 1fr); } .toolbar .field-search { grid-column: 1 / -1; } }
+@media (min-width: 64em) { .toolbar { grid-template-columns: 2fr 1fr 1fr 1fr; } .toolbar .field-search { grid-column: auto; } }
+.field label { display: block; margin-bottom: var(--space-1); font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.field input, .field select {
+  width: 100%; min-height: var(--tap); padding: 0 var(--space-3); background: var(--color-bg);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius); font-size: var(--text-sm);
+}
+.field input::placeholder { color: var(--color-text-muted); opacity: 1; }
+
+/* ---------- Shared story atoms ---------- */
+.kicker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); font-size: var(--text-xs); font-weight: var(--weight-medium); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
+.kicker .source { color: var(--color-brand); }
+.story-title { font-weight: var(--weight-bold); line-height: var(--leading-snug); }
+.story-title a { color: var(--color-text); text-decoration: none; }
+.story-title a:hover { color: var(--color-brand); text-decoration: underline; }
+.excerpt { color: var(--color-text-muted); }
+.tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tag {
+  display: inline-block; padding: 0.125rem var(--space-2); font-size: var(--text-xs); font-weight: var(--weight-medium);
+  color: var(--color-brand-strong); background: var(--color-brand-tint); border-radius: var(--radius);
+}
+.thumb { position: relative; overflow: hidden; background: var(--color-placeholder); border-radius: var(--radius); aspect-ratio: 16 / 9; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb.is-empty::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-placeholder) 100%); }
+.section-title { font-size: var(--text-md); line-height: var(--leading-tight); padding-bottom: var(--space-3); margin-bottom: var(--space-5); border-bottom: 2px solid var(--color-text); }
+section { margin-top: var(--space-7); }
+
+/* ---------- 2. Top story ---------- */
+.top-story { display: grid; gap: var(--space-5); grid-template-columns: 1fr; }
+@media (min-width: 56em) { .top-story { grid-template-columns: 7fr 5fr; gap: var(--space-6); align-items: start; } }
+.top-story .story-title { font-size: var(--text-xl); margin-block: var(--space-3); }
+.top-story .excerpt { font-size: var(--text-base); margin-bottom: var(--space-4); }
+.top-story .tags { margin-top: var(--space-4); }
+.top-story .thumb { aspect-ratio: 16 / 10; }
+.top-story .badge { color: #fff; background: var(--color-brand); padding: 0.125rem var(--space-2); border-radius: var(--radius); }
+@media (min-width: 56em) { .top-story .thumb { order: -1; } }
+
+/* ---------- 2. Three-story row (stacks to 1 column on mobile) ---------- */
+.story-row { display: grid; gap: var(--space-6) var(--space-5); grid-template-columns: 1fr; }
+@media (min-width: 48em) { .story-row { grid-template-columns: repeat(3, 1fr); } }
+.story-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.story-card .story-title { font-size: var(--text-md); }
+.story-card .excerpt { font-size: var(--text-sm); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ---------- 4. Collections ---------- */
+.collections { background: var(--color-surface); padding-block: var(--space-6); margin-top: var(--space-8); }
+.collections .section-title { border-bottom-color: var(--color-brand); }
+.collection-list { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
+@media (min-width: 40em) { .collection-list { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64em) { .collection-list { grid-template-columns: repeat(4, 1fr); } }
+.collection-btn {
+  width: 100%; height: 100%; text-align: left; display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-brand); border-radius: var(--radius); cursor: pointer;
+}
+.collection-btn:hover { border-color: var(--color-brand); }
+.collection-btn[aria-pressed="true"] { background: var(--color-brand); color: var(--color-on-brand); border-color: var(--color-brand); border-left-color: #fff; }
+.collection-btn[aria-pressed="true"] .c-desc, .collection-btn[aria-pressed="true"] .c-count { color: var(--color-on-brand-muted); }
+.collection-btn .c-name { font-weight: var(--weight-bold); font-size: var(--text-base); }
+.collection-btn .c-desc { font-size: var(--text-sm); color: var(--color-text-muted); }
+.collection-btn .c-count { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-brand); margin-top: auto; padding-top: var(--space-2); }
+
+/* ---------- 2. Latest list ---------- */
+.latest-item { display: grid; gap: var(--space-4); grid-template-columns: 1fr; padding-block: var(--space-5); border-bottom: 1px solid var(--color-border); }
+.latest-item:first-child { padding-top: 0; }
+@media (min-width: 40em) { .latest-item { grid-template-columns: 12rem 1fr; gap: var(--space-5); } }
+.latest-item .story-title { font-size: var(--text-md); margin-block: var(--space-1) var(--space-2); }
+.latest-item .excerpt { font-size: var(--text-sm); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: var(--space-3); }
+.empty { padding: var(--space-6) 0; color: var(--color-text-muted); }
+
+/* ---------- Pagination (5: labeled) ---------- */
+.pagination { margin-top: var(--space-6); }
+.pagination ul { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pagination a, .pagination span.page {
+  display: inline-flex; align-items: center; justify-content: center; min-width: var(--tap); min-height: var(--tap);
+  padding: 0 var(--space-3); border: 1px solid var(--color-border-strong); border-radius: var(--radius);
+  color: var(--color-text); text-decoration: none; font-size: var(--text-sm); font-weight: var(--weight-medium); background: var(--color-bg);
+}
+.pagination a:hover { border-color: var(--color-brand); color: var(--color-brand); }
+.pagination a[aria-current="page"] { background: var(--color-brand); color: #fff; border-color: var(--color-brand); }
+.pagination span.page[aria-disabled="true"] { color: var(--color-text-muted); border-color: var(--color-border); background: var(--color-surface); }
+.pagination span.dots { border: 0; min-width: auto; color: var(--color-text-muted); display: inline-flex; align-items: center; padding: 0 var(--space-1); }
+
+/* ---------- 4. CTA banner ---------- */
+.cta { margin-top: var(--space-8); background: var(--color-brand); color: var(--color-on-brand); }
+.cta .container { display: grid; gap: var(--space-4); grid-template-columns: 1fr; padding-block: var(--space-7); }
+@media (min-width: 48em) { .cta .container { grid-template-columns: 1fr auto; align-items: center; gap: var(--space-6); } }
+.cta h2 { font-size: var(--text-lg); line-height: var(--leading-tight); }
+.cta p { margin-top: var(--space-2); color: var(--color-on-brand-muted); max-width: 40rem; }
+.cta-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.btn { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 var(--space-5); border-radius: var(--radius); font-weight: var(--weight-bold); text-decoration: none; border: 2px solid #fff; }
+.btn-light { background: #fff; color: var(--color-brand); }
+.btn-light:hover { background: var(--color-brand-tint); color: var(--color-brand-strong); }
+.btn-ghost { background: transparent; color: #fff; }
+.btn-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.cta :focus-visible { outline-color: #fff; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--color-text); color: #D8D6DF; font-size: var(--text-sm); }
+.site-footer a { color: #fff; }
+.footer-main { display: grid; gap: var(--space-6); grid-template-columns: 1fr; padding-block: var(--space-7); }
+@media (min-width: 56em) { .footer-main { grid-template-columns: 1fr 2fr; } }
+.footer-brand strong { display: block; color: #fff; font-size: var(--text-md); margin-bottom: var(--space-3); }
+.social { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-3); }
+.footer-links { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+.footer-links h2 { font-size: var(--text-sm); color: #fff; margin-bottom: var(--space-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.footer-links li + li { margin-top: var(--space-1); }
+.footer-legal { border-top: 1px solid #3A3843; padding-block: var(--space-5); font-size: var(--text-xs); }
+.footer-legal p + p { margin-top: var(--space-3); }
+.legal-extra { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+
+/* ---------- Original header (unchanged) ---------- */
+.legacy-header { font-family: "Perstare", "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.15; }
+.legacy-header ul { padding: 0; margin: 0; }
+.legacy-header a, .legacy-header a:hover { text-decoration: none; }
+@font-face{font-family:"Perstare";src:url(https://rits.shanghai.nyu.edu/fonts/NYUPerstare-VF.ttf) format("truetype");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Icomoon";src:url(https://rits.shanghai.nyu.edu/fonts/icomoon.ttf) format("truetype");font-display:block}
+.hXTHVZ{font-family:"Icomoon" !important;speak:none;font-style:normal;font-weight:400;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;margin-right:0.3125rem;}
+.hXTHVZ:before{content:"\e902";}
+.hIGVcu{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999999;pointer-events:none;-webkit-transition:opacity 0.3s ease;transition:opacity 0.3s ease;display:block;opacity:0;}
+.hIGVcu.open{opacity:1;pointer-events:auto;}
+.bXDWgd{position:absolute;top:20px;right:50px;color:#fff;font-size:30px;line-height:1;background:none;border:0;z-index:999;}
+.bXDWgd:hover{color:white;cursor:pointer;-webkit-transition:0.3s;transition:0.3s;}
+.hKYxBD{position:absolute;top:0;left:0;width:100%;height:100vh;background:linear-gradient(135deg,#070411 0%,#130407 100%);opacity:0.98;}
+.brErOn{position:absolute;top:0;left:0;width:100%;height:100vh;pointer-events:none;}
+.khYgdt{margin:0;padding:0;list-style:none;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;width:100%;}
+.kWAHcr{margin:0;padding:0;list-style:none;width:10%;height:100vh;border-left:1px solid rgba(255,255,255,0.07);}
+.bLozBb{padding:0;background:url(https://rits.shanghai.nyu.edu/static/allnyu_map-b397ad149d7d3cc997d9dc1b561af034.png) 0% 0% no-repeat;position:absolute;top:0;left:0;width:100%;height:100vh;line-height:2;overflow-y:scroll;}
+.jVknek{position:relative;padding-left:18px;display:inline-block;}
+.jVknek::before{content:" ";width:12px;height:1px;position:absolute;left:0px;top:50%;background:#fff;}
+@media screen and (max-width:500px){.jVknek{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-align-items:left;-webkit-box-align:left;-ms-flex-align:left;align-items:left;font-size:15px;font-weight:bold;margin-bottom:20px;}}
+.iMOvxx{font-weight:bold;color:#fff;font-size:1.5em;line-height:1.90476em;margin-top:0.95238em;margin-bottom:0.95238em;}
+.hmToZr{font-weight:bold;color:#fff;font-size:1.17em;line-height:2.442em;margin-top:1.221em;margin-bottom:1.221em;}
+.dUOTLj{left:10%;width:40%;position:absolute;top:400px;}
+.kCjQdB{display:block;color:#fff;}
+.kyfOha{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+@media screen and (max-width:500px){.kyfOha{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-align-items:left;-webkit-box-align:left;-ms-flex-align:left;align-items:left;font-size:13px;margin-bottom:20px;}}
+.fmCmum{width:25%;padding-right:10px;list-style:none;}
+.eHlSFq{width:50%;list-style:none;}
+.eifbcl{left:60%;position:absolute;top:100px;}
+.ivsDSa{font-size:21px;font-weight:300;}
+@media screen and (max-width:500px){.ivsDSa{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-align-items:left;-webkit-box-align:left;-ms-flex-align:left;align-items:left;font-size:13px;font-weight:bold;margin-bottom:20px;}}
+.cCAHzg{font-size:13px;font-weight:300;}
+.iKYnCK{font-size:13px;font-weight:300;}
+@media screen and (max-width:500px){.iKYnCK{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-align-items:left;-webkit-box-align:left;-ms-flex-align:left;align-items:left;font-size:10px;margin-bottom:20px;margin-right:10px;}}
+.bHrgUf{background:none;border:0;color:#656565;font-size:0.8125rem;padding:0 0.5rem;line-height:2.25rem;}
+.bHrgUf:hover{color:white;cursor:pointer;-webkit-transition:0.3s;transition:0.3s;}
+.kTxAEr{float:right;background:white;height:36px;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;box-sizing:border-box;padding:0 8px;color:#444444;font-size:13px;}
+.kTxAEr:hover{background:#57068c;-webkit-transition:0.3s;transition:0.3s;color:#ffffff;cursor:pointer;}
+.cFUiNM{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;height:36px;font-size:0.8125rem;line-height:2.25rem;}
+.bWqSQr{display:block;border-radius:4px;opacity:0;-webkit-transition:opacity 0.3s ease;transition:opacity 0.3s ease;padding:0 10px;}
+.bWqSQr.open{opacity:1;}
+.bWqSQr input{height:26px;width:200px;padding:5px;}
+@media screen and (max-width:1038px){.bWqSQr{padding:0;}.bWqSQr input{width:100%;background-color:transparent;color:white;border:none;}}
+@media screen and (max-width:1038px){.ihiGWK{margin:0 auto;box-sizing:border-box;width:100%;max-width:1024px;padding:0 22px;padding-top:54px;font-size:1.5rem;}}
+.jsGBt{width:36px;text-align:center;height:100%;cursor:pointer;line-height:2.4rem;}
+.jsGBt:hover{background:#57068c;color:white;}
+@media screen and (max-width:1038px){.lpvsmT{padding:0;background:url(https://rits.shanghai.nyu.edu/static/allnyu_map-b397ad149d7d3cc997d9dc1b561af034.png) 0% 0% no-repeat;position:absolute;top:0;left:0;width:100%;height:100vh;line-height:2;overflow-y:scroll;}}
+@media screen and (max-width:1038px){.HBnBi{position:absolute;top:0;left:0;width:100%;height:100vh;background:linear-gradient(135deg,#070411 0%,#130407 100%);opacity:0.98;}}
+.cVVMxb{display:none;}
+@media screen and (max-width:1038px){.cVVMxb{display:block;position:absolute;top:20px;right:50px;color:#fff;font-size:30px;line-height:1;background:none;border:0;z-index:999;}.cVVMxb:hover{color:white;cursor:pointer;-webkit-transition:0.3s;transition:0.3s;}}
+@media screen and (max-width:1038px){.jghZLf{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999999;pointer-events:none;-webkit-transition:opacity 0.3s ease;transition:opacity 0.3s ease;display:block;opacity:0;}.jghZLf.open{opacity:1;pointer-events:auto;}}
+.dqctpZ{color:white;-webkit-text-decoration:none;text-decoration:none;padding:0.5rem 0 0.5rem 0;display:block;border-bottom:solid 2px transparent;}
+.dxjkMe{margin-left:1rem;list-style:none;line-height:1.5em;-webkit-box-flex:0;-webkit-flex-grow:0;-ms-flex-positive:0;flex-grow:0;-webkit-flex-shrink:1;-ms-flex-negative:1;flex-shrink:1;}
+.dxjkMe:last-child .children{right:0;}
+.iaVGHB{position:relative;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;padding-left:0;margin-bottom:0;list-style:none;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;font-weight:600;font-size:80%;}
+@media (min-width:62rem){.iaVGHB{-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;font-size:100%;}}
+@media (min-width:62rem){.iaVGHB{-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;}}
+.iaVGHB.root > .Header__NavMenuItem-sc-954rq4-1 > .Header__NavMenuItemLink-sc-954rq4-0:hover{border-bottom:solid 2px white;}
+.iaVGHB.children{padding:0;border:0;border-radius:0;display:none;background-color:#fff;background-clip:padding-box;min-width:160px;border-top:5px solid transparent;box-shadow:0px 8px 8px 0px rgb(0 0 0 / 75%);position:absolute;z-index:10;width:10vw;min-width:10rem;margin:0;}
+@media screen and (max-width:1038px){.iaVGHB{font-size:24px;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}.iaVGHB.children{display:none;background:none;width:100%;box-shadow:none;}.iaVGHB.children .Header__NavMenuItemLink-sc-954rq4-0{color:white !important;}}
+.iaVGHB.children .Header__NavMenuItemLink-sc-954rq4-0{color:black;padding:0;}
+.iaVGHB.children ul{right:auto;border-top:10px solid transparent;box-shadow:0px 12px 8px 0px rgb(0 0 0 / 75%);}
+@media screen and (max-width:1038px){.iaVGHB.children ul{box-shadow:none;}}
+.iaVGHB.children .Header__NavMenuItem-sc-954rq4-1{padding:0.375rem 0.9375rem;margin-left:0;}
+.iaVGHB.children .Header__NavMenuItem-sc-954rq4-1:hover{background:#57068c;}
+.iaVGHB.children .Header__NavMenuItem-sc-954rq4-1:hover > .Header__NavMenuItemLink-sc-954rq4-0{color:white;}
+.iaVGHB.children .children{right:100%;border-top:0;left:auto;position:absolute;margin-top:-4em;padding-top:5px;width:10vw;z-index:10;}
+.Header__NavMenuItem-sc-954rq4-1:hover > .Header__NavMenuList-sc-954rq4-2{display:block;}
+.lfEjNp{content:"";display:block;position:absolute;left:15px;width:22px;height:2px;background:#fff;-webkit-transform:rotate(0);-ms-transform:rotate(0);transform:rotate(0);-webkit-transition:all 0.25s;transition:all 0.25s;top:23px;-webkit-transform:translateY(-3px);-ms-transform:translateY(-3px);transform:translateY(-3px);}
+.cIdjlv{content:"";display:block;position:absolute;left:15px;width:22px;height:2px;background:#fff;-webkit-transform:rotate(0);-ms-transform:rotate(0);transform:rotate(0);-webkit-transition:all 0.25s;transition:all 0.25s;bottom:23px;-webkit-transform:translateY(3px);-ms-transform:translateY(3px);transform:translateY(3px);}
+.jVUYoF{cursor:pointer;position:absolute;width:48px;height:48px;-webkit-transition:all 0.25s;transition:all 0.25s;}
+.jVUYoF:hover .Header__NavHamburgerTopBar-sc-954rq4-3 .Header__NavHamburgerBottomBar-sc-954rq4-4{background:#999;}
+@media screen and (max-width:1038px){.jVUYoF.open{-webkit-transform:rotate(90deg);-ms-transform:rotate(90deg);transform:rotate(90deg);}.jVUYoF.open .Header__NavHamburgerTopBar-sc-954rq4-3{-webkit-transform:rotate(45deg) translateY(0px);-ms-transform:rotate(45deg) translateY(0px);transform:rotate(45deg) translateY(0px);}.jVUYoF.open .Header__NavHamburgerBottomBar-sc-954rq4-4{-webkit-transform:rotate(-45deg) translateY(0px);-ms-transform:rotate(-45deg) translateY(0px);transform:rotate(-45deg) translateY(0px);}}
+.cmdyuk{z-index:150;display:none;float:right;width:48px;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;}
+@media screen and (max-width:1038px){.cmdyuk{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}
+.iOARzD{top:0;display:"center";}
+.mdOEH{background-image:url(https://rits.shanghai.nyu.edu/static/hero_banner-8ede36dd2e1663de7cf26d792c598a11.png);background-size:cover;background-position:center;height:200px;-webkit-box-flex:0;-webkit-flex-grow:0;-ms-flex-positive:0;flex-grow:0;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-flex-basis:auto;-ms-flex-preferred-size:auto;flex-basis:auto;}
+body[data-path="/"] .Header__HeaderBg-sc-954rq4-8{height:493px;}
+@media screen and (max-width:1038px){.mdOEH{height:160px;}}
+.wYrpG{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;position:relative;width:100%;margin:0 auto;z-index:1;height:164px;background:linear-gradient(to bottom,rgba(0,0,0,0.85),rgba(255,255,255,0));}
+.bxFdKa{height:36px;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:right;-webkit-justify-content:right;-ms-flex-pack:right;justify-content:right;z-index:100;position:relative;color:#656565;background:white;}
+.eOJUGD{max-width:1390px;width:100%;margin:0 auto;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}
+@media screen and (max-width:1440px){.eOJUGD{max-width:1120px;}}
+.eOJUGD > div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;}
+.gZvHVW{color:#656565;margin-left:30px;}
+.fFPnWf{height:75px;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;margin:0 auto;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;z-index:100;width:100%;position:relative;-webkit-transition:all 0.25s;transition:all 0.25s;max-width:1390px;position:relative;padding:15px 0px 90px;}
+@media screen and (max-width:1038px){.fFPnWf.open{background-color:rgba(0,0,0,0.5);height:auto;}}
+@media screen and (max-width:1440px){.fFPnWf{max-width:1120px;}}
+@media screen and (max-width:768px){.fFPnWf{height:50px;max-width:1120px;}}
+.fOvZxc{z-index:150;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;float:left;max-width:400px;max-height:75px;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer;margin-left:30px;}
+@media screen and (max-width:1038px){.fOvZxc{max-width:180px;}}
+.iQZpVb{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-basis:auto;-ms-flex-preferred-size:auto;flex-basis:auto;-webkit-box-pack:end;-webkit-justify-content:flex-end;-ms-flex-pack:end;justify-content:flex-end;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin-top:16px;margin-bottom:16px;padding-right:calc(0.5rem + 8px);max-width:calc(100% - 222px);-webkit-flex-wrap:nowrap;-ms-flex-wrap:nowrap;flex-wrap:nowrap;}
+@media screen and (max-width:1440px){.iQZpVb{font-size:0.8em;}}
+@media screen and (max-width:1200px){.iQZpVb{font-size:0.8em;}}
+@media screen and (max-width:1038px){.iQZpVb{display:none;}.iQZpVb.open{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-basis:100%;-ms-flex-preferred-size:100%;flex-basis:100%;width:100%;}.iQZpVb.open > .Header__NavMenuList-sc-954rq4-2{width:80%;margin:auto;}.iQZpVb.open .Header__NavMenuList-sc-954rq4-2.children{position:inherit;}}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="legacy-header">
+<div class="Header__HeaderBg-sc-954rq4-8 mdOEH"><nav class="Header__TopBar-sc-954rq4-10 bxFdKa"><div class="Header__TopBarCont-sc-954rq4-11 eOJUGD"><a href="https://library.shanghai.nyu.edu/" target="_blank" rel="noopener noreferrer" class="Header__LibraryLink-sc-954rq4-12 gZvHVW">Go to NYU Shanghai Library website</a><div><div class="SearchBar__SearchContainer-sc-1js0zaz-0 cFUiNM"><div class="SearchBar__PopUpAllNyu1-sc-1js0zaz-9 jghZLf"><div class="SearchBar__PopUpAllNyuBtnCloseAllNyu-sc-1js0zaz-8 cVVMxb"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div><div class="SearchBar__PopUpBackDrop-sc-1js0zaz-7 HBnBi"></div><div class="SearchBar__PopUpBackGround-sc-1js0zaz-6 lpvsmT"><div class="SearchBar__SearchInputContainer-sc-1js0zaz-2 ihiGWK"><form class="SearchBar__SearchInput-sc-1js0zaz-1 bWqSQr"><input placeholder="Search" autoComplete="off" name="query" value=""/></form></div></div></div><div class="SearchBar__SearchButton-sc-1js0zaz-3 jsGBt"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></div></div><div class="AllNYUOverlay__AllNYUOverlayContent-sc-uyrfjp-0 fgNJjH"><nav class="AllNYUOverlay__UniButton-sc-uyrfjp-22 kTxAEr"><button class="AllNYUOverlay__StyledButton-sc-uyrfjp-21 bHrgUf"><i class="AllNYUOverlay__NYUTorch-sc-uyrfjp-1 hXTHVZ"></i><span>All NYU</span></button></nav><div class="AllNYUOverlay__PopUpAllNyu1-sc-uyrfjp-2 hIGVcu"><div class="AllNYUOverlay__PopUpAllNyuBtnCloseAllNyu-sc-uyrfjp-3 bXDWgd"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div><div class="AllNYUOverlay__PopUpBackDrop-sc-uyrfjp-4 hKYxBD"></div> <div class="AllNYUOverlay__PopUpGrid-sc-uyrfjp-5 brErOn"><ul class="AllNYUOverlay__UlElementGrid-sc-uyrfjp-6 khYgdt"><li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> <li class="AllNYUOverlay__LiUlElementGrid-sc-uyrfjp-7 kWAHcr"></li> </ul></div><div class="AllNYUOverlay__PopUpBackGround-sc-uyrfjp-8 bLozBb"><div class="AllNYUOverlay__NyuCenters-sc-uyrfjp-12 dUOTLj"><div class="AllNYUOverlay__PopUpBackGroundH2-sc-uyrfjp-10 iMOvxx"><span class="AllNYUOverlay__DashLeft-sc-uyrfjp-9 jVknek">NYU Around the World</span></div><ul class="AllNYUOverlay__NyuCentersUl-sc-uyrfjp-14 kyfOha"><li class="AllNYUOverlay__NyuCentersFirstChild-sc-uyrfjp-16 eHlSFq"><a href="http://nyu.edu" class="AllNYUOverlay__NyuLinksCampus-sc-uyrfjp-18 ivsDSa"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">New York</span></a><a href="http://shanghai.nyu.edu/" class="AllNYUOverlay__NyuLinksCampus-sc-uyrfjp-18 ivsDSa"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB"> Shanghai </span></a><a href="http://nyuad.nyu.edu/" class="AllNYUOverlay__NyuLinksCampus-sc-uyrfjp-18 ivsDSa"> <span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Abu Dhabi</span></a></li><li class="AllNYUOverlay__NyuCentersLi-sc-uyrfjp-15 fmCmum"><a href="http://www.nyu.edu/accra" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Accra</span> </a><a href="http://www.nyu.edu/berlin" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"> <span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Berlin</span></a><a href="http://www.nyu.edu/buenosaires" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"> <span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Buenos Aires</span></a><a href="http://www.nyu.edu/florence" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"> <span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Florence</span></a><a href="http://www.nyu.edu/london" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"> <span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">London</span></a><a href="http://www.nyu.edu/madrid" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"> <span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Madrid</span></a></li><li class="AllNYUOverlay__NyuCentersLi-sc-uyrfjp-15 fmCmum"><a href="http://www.nyu.edu/paris" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Paris</span></a><a href="http://www.nyu.edu/prague" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Prague</span></a><a href="http://www.nyu.edu/sydney" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Sydney</span></a><a href="http://www.nyu.edu/telaviv" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Tel Aviv</span></a><a href="http://www.nyu.edu/washingtondc" class="AllNYUOverlay__NyuLinksCenterA-sc-uyrfjp-19 cCAHzg"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Washington</span></a></li></ul></div><ul class="AllNYUOverlay__NyuCentersUl-sc-uyrfjp-14 kyfOha"><div class="AllNYUOverlay__NyuSchools-sc-uyrfjp-17 eifbcl"><div class="AllNYUOverlay__PopUpBackGroundH3-sc-uyrfjp-11 hmToZr"><span class="AllNYUOverlay__DashLeft-sc-uyrfjp-9 jVknek">Schools</span></div><a href="http://as.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Arts and Science </span></a><a href="http://cas.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">College of Arts and Science </span></a><a href="http://www.nyu.edu/dental/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">College of Dentistry </span></a><a href="http://publichealth.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">College of Global Public Health </span></a><a href="http://nursing.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Rory Meyers College of Nursing </span></a><a href="http://www.cims.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Courant Institute of Mathematical Sciences<!-- --> </span></a><a href="http://gallatin.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Gallatin School of Individualized Study </span></a><a href="http://gsas.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Graduate School of Arts and Science </span></a><a href="http://www.nyu.edu/gsas/dept/fineart/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Institute of Fine Arts </span></a><a href="http://www.nyu.edu/isaw/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Institute for the Study of the Ancient World<!-- --> </span></a><a href="http://www.stern.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Leonard N.Stern School of Business </span></a><a href="http://www.liberalstudies.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Liberal Studies Program </span></a><a href="http://wagner.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Robert F.Wagner Graduate School </span></a><a href="http://www.law.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">School of Law </span></a><a href="http://school.med.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">School of Medicine </span></a><a href="http://www.sps.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">School of Professional Studies </span></a><a href="http://www.nyu.edu/socialwork/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Silver School of Social Work </span></a><a href="http://steinhardt.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Steinhardt School </span></a><a href="http://engineering.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Tandon School of Engineering </span></a><a href="http://tisch.nyu.edu/" class="AllNYUOverlay__NyuLinksSchoolA-sc-uyrfjp-20 iKYnCK"><span class="AllNYUOverlay__NyuCentersA-sc-uyrfjp-13 kCjQdB">Tisch School of the Arts </span></a></div></ul></div></div></div></div></div></nav><div class="Header__HeaderCont-sc-954rq4-9 wYrpG"><nav class="Header__Nav-sc-954rq4-13 fFPnWf"><a class="Header__NavLogo-sc-954rq4-14 fOvZxc" href="/"><div class="Header__NavLogoImageContainer-sc-954rq4-7 iOARzD"><div data-gatsby-image-wrapper="" class="gatsby-image-wrapper gatsby-image-wrapper-constrained"><div style="max-width:4994px;display:block"><img alt="" role="presentation" aria-hidden="true" src="data:image/svg+xml;charset=utf-8,%3Csvg%20height=&#x27;919&#x27;%20width=&#x27;4994&#x27;%20xmlns=&#x27;http://www.w3.org/2000/svg&#x27;%20version=&#x27;1.1&#x27;%3E%3C/svg%3E" style="max-width:100%;display:block;position:static"/></div><picture><source type="image/webp" srcset="https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/7b31c/purple.webp 1249w,https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/7ac5d/purple.webp 2497w,https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/7ae66/purple.webp 4994w" sizes="(min-width: 4994px) 4994px, 100vw"/><img data-gatsby-image-ssr="" data-main-image="" style="filter:brightness(0) invert(1);opacity:1" sizes="(min-width: 4994px) 4994px, 100vw" decoding="async" loading="lazy" src="https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/9523c/purple.png" srcset="https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/af057/purple.png 1249w,https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/22955/purple.png 2497w,https://rits.shanghai.nyu.edu/static/3d54242af64412769b68295dcc7e0bb7/9523c/purple.png 4994w" alt="NYUSH Library Logo"/></picture></div></div></a><div class="Header__NavHamburgerCont-sc-954rq4-6 cmdyuk"><div class="Header__NavHamburger-sc-954rq4-5 jVUYoF"><span class="Header__NavHamburgerTopBar-sc-954rq4-3 lfEjNp"></span><span class="Header__NavHamburgerBottomBar-sc-954rq4-4 cIdjlv"></span></div></div><div class="Header__NavMenu-sc-954rq4-15 iQZpVb"><ul class="Header__NavMenuList-sc-954rq4-2 iaVGHB root"><li class="Header__NavMenuItem-sc-954rq4-1 dxjkMe"><a class="Header__NavMenuItemLink-sc-954rq4-0 dqctpZ" href="/">RITS Home</a></li><li class="Header__NavMenuItem-sc-954rq4-1 dxjkMe"><a aria-current="page" class="Header__NavMenuItemLink-sc-954rq4-0 dqctpZ" href="/news/">News</a></li><li class="Header__NavMenuItem-sc-954rq4-1 dxjkMe"><a class="Header__NavMenuItemLink-sc-954rq4-0 dqctpZ" href="/contact/">Contact</a></li><li class="Header__NavMenuItem-sc-954rq4-1 dxjkMe"><a class="Header__NavMenuItemLink-sc-954rq4-0 dqctpZ" href="/about-rits/">About RITS</a></li></ul></div></nav></div></div>
+</div>
+
+<main id="main" tabindex="-1">
+  <div class="container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="https://library.shanghai.nyu.edu/" target="_blank" rel="noopener noreferrer">NYU Shanghai Library<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li><a href="/">RITS Home</a></li>
+        <li><a href="/news/" aria-current="page">News</a></li>
+      </ol>
+    </nav>
+
+    <header class="page-head">
+      <h1>All News</h1>
+      <p class="meta" id="result-meta">Curated by <a href="https://library.nyu.edu/people/utku-ege-tuluk/" target="_blank" rel="noopener noreferrer">Utku Ege Tuluk<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+    </header>
+
+    <form class="toolbar" role="search" aria-label="Search and filter news" id="toolbar" onsubmit="return false">
+      <div class="field field-search">
+        <label for="f-q">Search</label>
+        <input id="f-q" type="search" placeholder="Search by title, content, or source" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="f-cat">Category</label>
+        <select id="f-cat">
+          <option value="">All categories</option>
+          <option>AI</option>
+          <option>Data and Digital Scholarship Services</option>
+          <option>Emerging Technologies</option>
+          <option>Space Use</option>
+          <option>Uncategorized</option>
+          <option>Workshops</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-year">Year</label>
+        <select id="f-year">
+          <option value="">All years</option>
+          <option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-sort">Sort</label>
+        <select id="f-sort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+    </form>
+    <p class="visually-hidden" id="live" role="status" aria-live="polite"></p>
+  </div>
+
+  <!-- Curated view: top story + three-story row -->
+  <div class="container" id="curated">
+    <section aria-labelledby="top-h" id="top-section">
+      <h2 class="section-title" id="top-h">Top story</h2>
+      <div id="top-story"></div>
+    </section>
+    <section aria-labelledby="row-h" id="row-section">
+      <h2 class="section-title" id="row-h">Also featured</h2>
+      <div class="story-row" id="story-row"></div>
+    </section>
+  </div>
+
+  <!-- Collections -->
+  <section class="collections" aria-labelledby="col-h">
+    <div class="container">
+      <h2 class="section-title" id="col-h">Browse collections</h2>
+      <ul class="collection-list" id="collection-list"></ul>
+    </div>
+  </section>
+
+  <!-- Latest -->
+  <div class="container">
+    <section aria-labelledby="latest-h" id="latest-section">
+      <h2 class="section-title" id="latest-h">Latest</h2>
+      <div id="latest-list"></div>
+      <nav class="pagination" id="pagination" aria-label="News pages"></nav>
+    </section>
+  </div>
+
+  <!-- CTA banner -->
+  <section class="cta" aria-labelledby="cta-h" style="margin-top:var(--space-8)">
+    <div class="container">
+      <div>
+        <h2 id="cta-h">Never miss a RITS update</h2>
+        <p>Subscribe to the RSS feed for AI, emerging technology, and digital scholarship news curated for the NYU Shanghai community, or get in touch to suggest a story.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-light" href="/rss.xml" target="_blank" rel="noopener noreferrer">Subscribe to RSS<span class="visually-hidden"> (opens in a new tab)</span></a>
+        <a class="btn btn-ghost" href="/contact/">Contact RITS</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-main">
+    <div class="footer-brand">
+      <strong>NYU Shanghai RITS</strong>
+      <p>Connect with NYU Shanghai</p>
+      <ul class="social" aria-label="NYU Shanghai on social media">
+        <li><a href="https://twitter.com/nyushanghai/">Twitter</a></li>
+        <li><a href="https://www.facebook.com/NYUShanghai/">Facebook</a></li>
+        <li><a href="https://e.weibo.com/nyushanghai/">Weibo</a></li>
+        <li><a href="https://www.youtube.com/channel/UC8ytAYhNDxyp0EX1MjaRdHQ/featured">YouTube</a></li>
+        <li><a href="https://www.instagram.com/nyushanghai/">Instagram</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <nav aria-labelledby="fl-1"><h2 id="fl-1">Portal Campuses</h2><ul>
+        <li><a href="https://www.nyu.edu/">NYU</a></li><li><a href="https://shanghai.nyu.edu">Shanghai</a></li><li><a href="https://nyuad.nyu.edu">Abu Dhabi</a></li></ul></nav>
+      <nav aria-labelledby="fl-2"><h2 id="fl-2">Get in Touch</h2><ul>
+        <li><a href="https://shanghai.nyu.edu/contact">Contact Us</a></li><li><a href="http://360.shanghai.nyu.edu/">Campus Tour</a></li><li><a href="https://shanghai.nyu.edu/about/work">Jobs</a></li></ul></nav>
+      <nav aria-labelledby="fl-3"><h2 id="fl-3">Quicklinks</h2><ul>
+        <li><a href="https://shanghai.nyu.edu/students">Students</a></li><li><a href="https://www.nyu.edu/footer/accessibility.html">Accessibility</a></li><li><a href="mailto:shanghai.rits@nyu.edu">Website Feedback</a></li></ul></nav>
+    </div>
+  </div>
+  <div class="container footer-legal">
+    <p><strong>New York University</strong> — Equal Opportunity and Non-Discrimination at NYU. New York University is committed to maintaining an environment that encourages and fosters respect for individual values and appropriate conduct among all persons. In all University spaces—physical and digital—programming, activities, and events are carried out in accordance with applicable law as well as University policy, which includes but is not limited to its <a href="https://www.nyu.edu/about/policies-guidelines-compliance/equal-opportunity/harassment-and-discrimination.html">Non-Discrimination and Anti-Harassment Policy</a>.</p>
+    <p class="legal-extra">
+      <a href="https://beian.miit.gov.cn/">沪ICP备15010846号-2</a>
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011502017015">沪公网安备31011502017015号</a>
+    </p>
+    <p>© 2025 All rights reserved. <a href="https://rits.shanghai.nyu.edu" target="_blank" rel="noopener noreferrer">Powered by NYU Shanghai RITS<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   3. DATA — each post now carries featured, source, collections
+   ========================================================= */
+const COLLECTIONS = [
+  { id: "model-releases", name: "Model releases",     desc: "New frontier and mid-tier models, and how they rank." },
+  { id: "agents-tooling", name: "Agents & tooling",   desc: "Agent runtimes, APIs, and the safety stack around them." },
+  { id: "open-weights",   name: "Open weights",       desc: "Models you can download, run, and adapt yourself." },
+  { id: "vision",         name: "Vision & multimodal",desc: "OCR, image, video, and document-reading models." }
+];
+const POSTS = [
+  {
+    "id": "deepseek-harness-v0-2-desktop-app",
+    "title": "DeepSeek Harness v0.2 Ships as a Desktop App for macOS and Windows",
+    "href": "/ai/deepseek-harness-v0-2-desktop-app/",
+    "date": "2026-09-30",
+    "dateLabel": "September 30, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": true,
+    "source": "DeepSeek",
+    "collections": [
+      "agents-tooling"
+    ],
+    "excerpt": "DeepSeek released DeepSeek Harness v0.2 on September 29, 2026, and with it the first official desktop installers for macOS (Apple silicon) and Windows. Seven weeks ago Harness debuted as a developer-preview agent runtime that you launched from a terminal with npx. It now installs like an ordinary desktop app: sign in, pick a local folder…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/deepseek-harness-v0-2-desktop-plugins-scaled.webp"
+  },
+  {
+    "id": "openais-decisions-api-picks-answers-instead-of-writing-them",
+    "title": "OpenAI’s Decisions API Picks Answers Instead of Writing Them",
+    "href": "/ai/openais-decisions-api-picks-answers-instead-of-writing-them/",
+    "date": "2026-09-30",
+    "dateLabel": "September 30, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "OpenAI",
+    "collections": [
+      "agents-tooling"
+    ],
+    "excerpt": "OpenAI introduced the Decisions API at DevDay on September 29, 2026 — an endpoint that does not write text at all. Developers define a question and a finite set of allowed answers, pass in text or an image as context, and get one of those answers back. It runs on a specialised version of GPT‑6…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/openai-decisions-api-1.jpg"
+  },
+  {
+    "id": "openai-dots-always-on-agents",
+    "title": "OpenAI Launches Dots, Always-On Agents Powered by GPT-6 Astra",
+    "href": "/ai/openai-dots-always-on-agents/",
+    "date": "2026-09-30",
+    "dateLabel": "September 30, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": true,
+    "source": "OpenAI",
+    "collections": [
+      "agents-tooling",
+      "model-releases"
+    ],
+    "excerpt": "OpenAI launched dots at DevDay on September 29, 2026: always-on personal agents, powered by GPT‑6 Astra, that run on their own cloud computers and keep working on your goals when you aren’t in the chat. OpenAI calls them “remarkably capable, always-on agents built to handle everything.” The pitch is a change of interaction model. You…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/openai-dots-always-on-agents-1.jpg"
+  },
+  {
+    "id": "teleocr-parses-crumpled-photographed-pages",
+    "title": "TeleOCR Parses Crumpled, Photographed Pages Without Dewarping",
+    "href": "/ai/teleocr-parses-crumpled-photographed-pages/",
+    "date": "2026-09-29",
+    "dateLabel": "September 29, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "China Telecom TeleAI",
+    "collections": [
+      "vision",
+      "open-weights"
+    ],
+    "excerpt": "A research team at China Telecom’s AI subsidiary (TeleAI) has released TeleOCR, a 1.2-billion-parameter vision-language model that parses both clean digital documents and photographed ones — folded, curled, or crumpled — with no separate dewarping step. The weights first went up on Hugging Face on August 17, 2026 under the name NaviDC-OCR. The team renamed…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/teleocr-dir300.png"
+  },
+  {
+    "id": "claude-sonnet-5-5-ranks-2-at-56-behind-only-opus-5-5",
+    "title": "Claude Sonnet 5.5 Ranks #2 at 56, Behind Only Opus 5.5",
+    "href": "/ai/claude-sonnet-5-5-ranks-2-at-56-behind-only-opus-5-5/",
+    "date": "2026-09-29",
+    "dateLabel": "September 29, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": true,
+    "source": "Anthropic",
+    "collections": [
+      "model-releases"
+    ],
+    "excerpt": "Anthropic released Claude Sonnet 5.5 on September 28, 2026, and independent benchmarker Artificial Analysis ranks it second on its Intelligence Index with a score of 56, two points behind Claude Opus 5.5 and ahead of both GPT-6 Astra and Claude Fable 5.1. The mid-tier model keeps Sonnet 5’s price of $2 / $10 per million…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/claude-sonnet-5-5-ranks-second-featured.jpg"
+  },
+  {
+    "id": "nvidia-openshell-puts-ai-agents-in-kernel-enforced-sandboxes",
+    "title": "NVIDIA OpenShell Puts AI Agents in Kernel-Enforced Sandboxes",
+    "href": "/ai/nvidia-openshell-puts-ai-agents-in-kernel-enforced-sandboxes/",
+    "date": "2026-09-29",
+    "dateLabel": "September 29, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "NVIDIA",
+    "collections": [
+      "agents-tooling"
+    ],
+    "excerpt": "On September 28, 2026, NVIDIA launched the Open Agent Safety Platform, a two-part stack for containing autonomous AI agents. It pairs OpenShell, an Apache 2.0 open-source runtime that runs agents inside kernel-level sandboxes governed by declarative policy, with Sentry, a reference design that moves monitoring onto a separate BlueField-4 DPU. The design premise, in the…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/nvidia-openshell-agent-sandbox-2.jpg"
+  },
+  {
+    "id": "gemini-3-8-live-avatar",
+    "title": "Google Gives Gemini 3.8 Live a Face With Live Avatar",
+    "href": "/ai/gemini-3-8-live-avatar/",
+    "date": "2026-09-28",
+    "dateLabel": "September 28, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "Google",
+    "collections": [
+      "model-releases",
+      "vision"
+    ],
+    "excerpt": "On September 24, 2026, Google released Gemini 3.8 Live with Live Avatar, which adds near real-time generated video to its speech-to-speech dialogue model. The avatar has a face that lip-syncs to the voice, changes expression, and takes turns in the conversation, so an enterprise voice agent can now appear as a video call. The feature…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/gemini-live-avatar-1.png"
+  },
+  {
+    "id": "us-companies-turn-to-open-models-as-ai-bills-climb",
+    "title": "US Companies Turn to Open Models as AI Bills Climb",
+    "href": "/ai/us-companies-turn-to-open-models-as-ai-bills-climb/",
+    "date": "2026-09-28",
+    "dateLabel": "September 28, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "Financial Times",
+    "collections": [
+      "open-weights"
+    ],
+    "excerpt": "US companies are starting to move some of their AI workloads off premium frontier models to cheaper ones, and some of that work is going to open-weight models. A Financial Times report published on September 27, 2026 names Tinder, PNC Financial Services, CH Robinson and Siemens among the businesses that have recently discussed using open-weight…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/us-companies-turn-to-open-models-featured.png"
+  },
+  {
+    "id": "black-forest-labs-releases-flux-3-action-an-open-weight-robot-model",
+    "title": "Black Forest Labs Releases FLUX 3 Action, an Open-Weight Robot Model",
+    "href": "/ai/black-forest-labs-releases-flux-3-action-an-open-weight-robot-model/",
+    "date": "2026-09-24",
+    "dateLabel": "September 24, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "Black Forest Labs",
+    "collections": [
+      "open-weights",
+      "vision"
+    ],
+    "excerpt": "Black Forest Labs released FLUX 3 Action on September 23, 2026 — a 7-billion-parameter, open-weight “world action model” that takes camera frames, a robot’s current state and a text instruction, and returns the next chunk of motor commands together with predicted video of how the scene should unfold. It is the first open-weight release to…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/black-forest-labs-releases-flux-3-action-1.jpg"
+  },
+  {
+    "id": "apple-lensvlm-9b",
+    "title": "Apple’s LensVLM-9B Reads Compressed Pages, Then Zooms In",
+    "href": "/ai/apple-lensvlm-9b/",
+    "date": "2026-09-24",
+    "dateLabel": "September 24, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "Apple",
+    "collections": [
+      "open-weights",
+      "vision"
+    ],
+    "excerpt": "Apple has published the weights for LensVLM-9B, a vision-language model that reads long documents as heavily compressed images and zooms back in only on the pages it needs. The checkpoint went up on Hugging Face on September 21, 2026, alongside inference and evaluation code on GitHub. The paper behind it — a collaboration between Apple…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/apple-lensvlm-9b-f2.png"
+  },
+  {
+    "id": "openai-gpt-6-sol-luna",
+    "title": "OpenAI Releases GPT-6 Sol and Luna at Half the Price",
+    "href": "/ai/openai-gpt-6-sol-luna/",
+    "date": "2026-09-23",
+    "dateLabel": "September 23, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": true,
+    "source": "OpenAI",
+    "collections": [
+      "model-releases"
+    ],
+    "excerpt": "OpenAI released GPT‑6 Sol and GPT‑6 Luna on September 22, 2026, three weeks after it launched the flagship GPT‑6 Astra. Sol is the mid-tier model and Luna the low-cost one. Both cost half as much in the API as the GPT‑5.6 models they replace: Sol is $2 per million input tokens and $10 per million…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/openai-gpt-6-sol-luna-1.png"
+  },
+  {
+    "id": "ant-ming-image-0-1-design",
+    "title": "Ant Group Open-Sources Ming-Image-0.1-Design for Text-Heavy Graphics",
+    "href": "/ai/ant-ming-image-0-1-design/",
+    "date": "2026-09-23",
+    "dateLabel": "September 23, 2026",
+    "category": "AI",
+    "curator": "Utku Ege Tuluk",
+    "featured": false,
+    "source": "Ant Group",
+    "collections": [
+      "open-weights",
+      "vision"
+    ],
+    "excerpt": "Ant Group’s inclusionAI lab has open-sourced Ming-Image-0.1-Design, a pair of 6-billion-parameter image models built for graphic design rather than photography: user interfaces, infographics, posters, and other layouts where the rendered text has to be legible. The weights went up on Hugging Face on September 17, 2026, under the MIT licence, and the lab’s Ant Ling…",
+    "image": "https://wordpress.ritsdev.top/wp-content/uploads/2026/09/ming-image-design-featured.jpg"
+  }
+];
+const TOTAL_POSTS = 607, TOTAL_PAGES = 51, PER_PAGE = 12, CURRENT_PAGE = 1;
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const colName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || id;
+const state = { q: "", category: "", year: "", sort: "newest", collection: "" };
+
+const thumb = (p) => `<div class="thumb"><img src="${esc(p.image)}" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('is-empty');this.remove()"></div>`;
+const dateEl = p => `<time datetime="${esc(p.date)}">${esc(p.dateLabel)}</time>`;
+const kicker = (p, extra = "") => `<p class="kicker">${extra}<span class="source">${esc(p.source)}</span>${dateEl(p)}</p>`;
+const tags = p => `<ul class="tags" aria-label="Collections">${p.collections.map(c => `<li class="tag">${esc(colName(c))}</li>`).join("")}</ul>`;
+
+/* ---------- 2. renderers ---------- */
+function renderTop(p) {
+  return `<article class="top-story">
+    <div>
+      ${kicker(p, '<span class="badge">Featured</span>')}
+      <h3 class="story-title"><a href="${esc(p.href)}">${esc(p.title)}</a></h3>
+      <p class="excerpt">${esc(p.excerpt)}</p>
+      <a href="${esc(p.href)}">Read the story<span class="visually-hidden">: ${esc(p.title)}</span></a>
+      ${tags(p)}
+    </div>
+    <a href="${esc(p.href)}" tabindex="-1" aria-hidden="true">${thumb(p)}</a>
+  </article>`;
+}
+function renderCard(p) {
+  return `<article class="story-card">
+    <a href="${esc(p.href)}" tabindex="-1" aria-hidden="true">${thumb(p)}</a>
+    ${kicker(p)}
+    <h3 class="story-title"><a href="${esc(p.href)}">${esc(p.title)}</a></h3>
+    <p class="excerpt">${esc(p.excerpt)}</p>
+  </article>`;
+}
+function renderLatest(p) {
+  return `<article class="latest-item">
+    <a href="${esc(p.href)}" tabindex="-1" aria-hidden="true">${thumb(p)}</a>
+    <div>
+      ${kicker(p)}
+      <h3 class="story-title"><a href="${esc(p.href)}">${esc(p.title)}</a></h3>
+      <p class="excerpt">${esc(p.excerpt)}</p>
+      ${tags(p)}
+    </div>
+  </article>`;
+}
+
+function renderCollections() {
+  $("#collection-list").innerHTML = COLLECTIONS.map(c => {
+    const n = POSTS.filter(p => p.collections.includes(c.id)).length;
+    const on = state.collection === c.id;
+    return `<li><button type="button" class="collection-btn" data-col="${c.id}" aria-pressed="${on}">
+      <span class="c-name">${esc(c.name)}</span><span class="c-desc">${esc(c.desc)}</span>
+      <span class="c-count">${n} ${n === 1 ? "story" : "stories"}${on ? " · selected" : ""}</span></button></li>`;
+  }).join("");
+}
+
+/* ---------- pagination (5: labeled landmark, real links, aria-current) ---------- */
+function renderPagination() {
+  const page = CURRENT_PAGE, last = TOTAL_PAGES;
+  const link = (n, label, text, cur) => `<li><a href="?page=${n}" aria-label="${label}"${cur ? ' aria-current="page"' : ""}>${text}</a></li>`;
+  const off = (label, text) => `<li><span class="page" aria-disabled="true" aria-label="${label} (unavailable)">${text}</span></li>`;
+  const items = [];
+  items.push(page > 1 ? link(1, "Go to first page", "««") : off("First page", "««"));
+  items.push(page > 1 ? link(page - 1, "Go to previous page", "«") : off("Previous page", "«"));
+  [1, 2, 3].forEach(n => items.push(link(n, n === page ? `Page ${n}, current page` : `Go to page ${n}`, n, n === page)));
+  items.push(`<li><span class="dots" aria-hidden="true">…</span></li>`);
+  items.push(link(last, `Go to page ${last}`, last, false));
+  items.push(page < last ? link(page + 1, "Go to next page", "»") : off("Next page", "»"));
+  items.push(page < last ? link(last, "Go to last page", "»»") : off("Last page", "»»"));
+  $("#pagination").innerHTML = `<ul>${items.join("")}</ul>`;
+}
+
+/* ---------- main render ---------- */
+function isFiltering() { return !!(state.q || state.category || state.year || state.collection || state.sort !== "newest"); }
+function matches(p) {
+  const q = state.q.trim().toLowerCase();
+  if (q && !(p.title + " " + p.excerpt + " " + p.source).toLowerCase().includes(q)) return false;
+  if (state.category && p.category !== state.category) return false;
+  if (state.year && p.date.slice(0, 4) !== state.year) return false;
+  if (state.collection && !p.collections.includes(state.collection)) return false;
+  return true;
+}
+function render() {
+  const sorted = [...POSTS].sort((a, b) => state.sort === "oldest" ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
+  const filtering = isFiltering();
+  let announce;
+
+  if (!filtering) {
+    // Curated layout: 1 top story, 3 in the row, rest in Latest.
+    const feat = sorted.filter(p => p.featured);
+    const fill = sorted.filter(p => !p.featured);
+    const lead = [...feat, ...fill].slice(0, 4);              // fall back to newest if <4 featured
+    const [top, ...row] = lead;
+    const rest = sorted.filter(p => !lead.includes(p));
+    $("#curated").hidden = false;
+    $("#top-story").innerHTML = top ? renderTop(top) : "";
+    $("#story-row").innerHTML = row.map(renderCard).join("");
+    $("#latest-h").textContent = "Latest";
+    $("#latest-list").innerHTML = rest.map(renderLatest).join("");
+    $("#pagination").hidden = false;
+    $("#result-meta").innerHTML = `Showing 1–${POSTS.length} of ${TOTAL_POSTS} posts (page ${CURRENT_PAGE} of ${TOTAL_PAGES}) · Curated by <a href="https://library.nyu.edu/people/utku-ege-tuluk/" target="_blank" rel="noopener noreferrer">Utku Ege Tuluk<span class="visually-hidden"> (opens in a new tab)</span></a>`;
+    announce = "Showing all news.";
+  } else {
+    const hits = sorted.filter(matches);
+    $("#curated").hidden = true;
+    $("#latest-h").textContent = state.collection ? colName(state.collection) : "Results";
+    $("#latest-list").innerHTML = hits.length ? hits.map(renderLatest).join("")
+      : `<p class="empty">No stories match these filters. Try clearing the search or choosing another collection.</p>`;
+    $("#pagination").hidden = true;
+    $("#result-meta").textContent = `${hits.length} ${hits.length === 1 ? "story matches" : "stories match"} your filters.`;
+    announce = `${hits.length} ${hits.length === 1 ? "story" : "stories"} found.`;
+  }
+  renderCollections();
+  $("#live").textContent = announce;
+}
+
+/* ---------- events ---------- */
+$("#f-q").addEventListener("input", e => { state.q = e.target.value; render(); });
+$("#f-cat").addEventListener("change", e => { state.category = e.target.value; render(); });
+$("#f-year").addEventListener("change", e => { state.year = e.target.value; render(); });
+$("#f-sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
+$("#collection-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-col]"); if (!b) return;
+  state.collection = state.collection === b.dataset.col ? "" : b.dataset.col;
+  render();
+  const again = $(`[data-col="${b.dataset.col}"]`); if (again) again.focus();   // keep keyboard focus after re-render
+});
+/* ---------- original header behaviour (hamburger, search overlay, All NYU overlay) ---------- */
+(function () {
+  const q = s => document.querySelector(s);
+  const toggle = (el, on) => el && el.classList.toggle('open', on);
+  const ham = q('.Header__NavHamburgerCont-sc-954rq4-6');
+  if (ham) ham.addEventListener('click', () => {
+    const menu = q('.Header__NavMenu-sc-954rq4-15'), bars = q('.Header__NavHamburger-sc-954rq4-5');
+    const on = !menu.classList.contains('open'); toggle(menu, on); toggle(bars, on);
+  });
+  const sBtn = q('.SearchBar__SearchButton-sc-1js0zaz-3'), sOv = q('.SearchBar__PopUpAllNyu1-sc-1js0zaz-9'),
+        sIn = q('.SearchBar__SearchInput-sc-1js0zaz-1'), sClose = q('.SearchBar__PopUpAllNyuBtnCloseAllNyu-sc-1js0zaz-8');
+  if (sBtn) sBtn.addEventListener('click', () => { toggle(sOv, true); toggle(sIn, true); const i = sIn && sIn.querySelector('input'); if (i) i.focus(); });
+  if (sClose) sClose.addEventListener('click', () => { toggle(sOv, false); toggle(sIn, false); });
+  const nBtn = q('.AllNYUOverlay__StyledButton-sc-uyrfjp-21'), nOv = q('.AllNYUOverlay__PopUpAllNyu1-sc-uyrfjp-2'),
+        nClose = q('.AllNYUOverlay__PopUpAllNyuBtnCloseAllNyu-sc-uyrfjp-3');
+  if (nBtn) nBtn.addEventListener('click', () => toggle(nOv, true));
+  if (nClose) nClose.addEventListener('click', () => toggle(nOv, false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { toggle(sOv, false); toggle(sIn, false); toggle(nOv, false); } });
+})();
+
+renderPagination();
+render();
+</script>
+</body>
+</html>
