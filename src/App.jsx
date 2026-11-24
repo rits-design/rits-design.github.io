@@ -8,6 +8,13 @@ import {
   typography,
   visual,
 } from './tokens.js'
+import {
+  Banner,
+  Buttons,
+  Footer,
+  PageMargins,
+  componentCatalog,
+} from './components/index.js'
 
 function copyText(text) {
   return navigator.clipboard.writeText(text)
@@ -62,7 +69,106 @@ function TokenGroup({ title, rows, swatch }) {
   )
 }
 
+function TokensView() {
+  return (
+    <main className="page">
+      <p className="lede">
+        Shared foundation tokens from rits_home_v3, rits_news_2, and rits_news_article_v2.
+        Click a token to copy its name.
+      </p>
+
+      <section>
+        <h2>Color</h2>
+        <TokenGroup rows={colors} swatch />
+      </section>
+
+      <section>
+        <h2>Typography</h2>
+        <TokenGroup title="Families" rows={typography.families} />
+        <TokenGroup title="Scale (major third, 1.25)" rows={typography.scale} />
+        <TokenGroup title="Leading" rows={typography.leading} />
+        <TokenGroup title="Weights" rows={typography.weights} />
+        <TokenGroup title="Letter-spacing conventions" rows={typography.letterSpacing} />
+      </section>
+
+      <section>
+        <h2>Spacing &amp; layout</h2>
+        <p className="section-note">Spacing uses a 4px base.</p>
+        <TokenGroup title="Spacing" rows={spacing} />
+        <TokenGroup title="Layout" rows={layout} />
+        <TokenGroup title="Breakpoints" rows={breakpoints} />
+      </section>
+
+      <section>
+        <h2>Visual properties</h2>
+        <TokenGroup rows={visual} />
+      </section>
+    </main>
+  )
+}
+
+const previews = {
+  banner: Banner,
+  footer: Footer,
+  'page-margins': PageMargins,
+  buttons: Buttons,
+}
+
+function ComponentsView() {
+  return (
+    <main className="page page--components">
+      <p className="lede">
+        Components copied from rits_home_v3, rits_news_2, and rits_news_article_v2.
+      </p>
+
+      <section>
+        <h2>Components</h2>
+        <div className="component-table-wrap">
+          <table className="component-table">
+            <thead>
+              <tr>
+                <th scope="col">Component</th>
+                <th scope="col">Role</th>
+                <th scope="col">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {componentCatalog.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <a href={`#${item.id}`}>{item.name}</a>
+                  </td>
+                  <td>{item.role}</td>
+                  <td>
+                    <code>{item.source}</code>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {componentCatalog.map((item) => {
+        const Preview = previews[item.id]
+        return (
+          <section key={item.id} id={item.id} className="component-block">
+            <header className="component-block-head">
+              <h2>{item.name}</h2>
+              <p className="section-note">{item.role}</p>
+            </header>
+            <div className="component-preview">
+              <Preview />
+            </div>
+          </section>
+        )
+      })}
+    </main>
+  )
+}
+
 export default function App() {
+  const [view, setView] = useState('components')
   const [barStatus, setBarStatus] = useState('')
 
   async function handleCopyAll() {
@@ -82,51 +188,41 @@ export default function App() {
       <header className="top-bar">
         <div className="top-bar-inner">
           <strong>RITS Design Language</strong>
+          <nav className="view-tabs" aria-label="Catalog">
+            <button
+              type="button"
+              className={view === 'components' ? 'is-active' : undefined}
+              aria-current={view === 'components' ? 'page' : undefined}
+              onClick={() => setView('components')}
+            >
+              Components
+            </button>
+            <button
+              type="button"
+              className={view === 'tokens' ? 'is-active' : undefined}
+              aria-current={view === 'tokens' ? 'page' : undefined}
+              onClick={() => setView('tokens')}
+            >
+              Tokens
+            </button>
+          </nav>
           <div className="top-actions">
             {barStatus ? <span className="bar-status">{barStatus}</span> : null}
-            <button type="button" onClick={handleCopyAll}>
-              Copy
-            </button>
-            <button type="button" onClick={handleExport}>
-              Export design.md
-            </button>
+            {view === 'tokens' ? (
+              <>
+                <button type="button" onClick={handleCopyAll}>
+                  Copy
+                </button>
+                <button type="button" onClick={handleExport}>
+                  Export design.md
+                </button>
+              </>
+            ) : null}
           </div>
         </div>
       </header>
 
-      <main className="page">
-        <p className="lede">
-          Shared foundation tokens from rits_home_v3, rits_news_2, and rits_news_article_v2.
-          Click a token to copy its name.
-        </p>
-
-        <section>
-          <h2>Color</h2>
-          <TokenGroup rows={colors} swatch />
-        </section>
-
-        <section>
-          <h2>Typography</h2>
-          <TokenGroup title="Families" rows={typography.families} />
-          <TokenGroup title="Scale (major third, 1.25)" rows={typography.scale} />
-          <TokenGroup title="Leading" rows={typography.leading} />
-          <TokenGroup title="Weights" rows={typography.weights} />
-          <TokenGroup title="Letter-spacing conventions" rows={typography.letterSpacing} />
-        </section>
-
-        <section>
-          <h2>Spacing &amp; layout</h2>
-          <p className="section-note">Spacing uses a 4px base.</p>
-          <TokenGroup title="Spacing" rows={spacing} />
-          <TokenGroup title="Layout" rows={layout} />
-          <TokenGroup title="Breakpoints" rows={breakpoints} />
-        </section>
-
-        <section>
-          <h2>Visual properties</h2>
-          <TokenGroup rows={visual} />
-        </section>
-      </main>
+      {view === 'components' ? <ComponentsView /> : <TokensView />}
     </>
   )
 }
